@@ -3,6 +3,7 @@ import { Image, ScrollView } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import { format } from 'prettier';
 import Logo from '../../assets/logo-header.png';
 import SearchInput from '../../components/SearchInput';
 
@@ -60,6 +61,19 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     async function loadFoods(): Promise<void> {
       // Load Foods from API
+      const { data } = await api.get<Food[]>('foods', {
+        params: {
+          category_like: selectedCategory,
+          name_like: searchValue,
+        },
+      });
+
+      setFoods(
+        data.map(food => ({
+          ...food,
+          formattedPrice: formatValue(food.price),
+        })),
+      );
     }
 
     loadFoods();
@@ -68,6 +82,9 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     async function loadCategories(): Promise<void> {
       // Load categories from API
+      const { data } = await api.get<Category[]>('categories');
+
+      setCategories(data);
     }
 
     loadCategories();
