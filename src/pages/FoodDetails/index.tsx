@@ -77,7 +77,13 @@ const FoodDetails: React.FC = () => {
       const { id } = routeParams;
       const { data } = await api.get<Food>(`foods/${id}`);
 
-      setFood(data);
+      setFood({ ...data, formattedPrice: formatValue(Number(data.price)) });
+      setExtras(
+        data.extras.map(extra => ({
+          ...extra,
+          quantity: 0,
+        })),
+      );
     }
 
     loadFood();
